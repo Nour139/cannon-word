@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Canon</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div id="score">Score: 0</div>
+            <div id="level">Level: 1</div>
+        </div>
+        <div id="wordSource"></div>
+        <div id="gameOverScreen" style="display: none;">
+            <h1>GAME OVER</h1>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button id="restartButton">RESTART</button>
+        </div>
+    </div>
+
+    <!-- Sound Files (replace with your actual paths) -->
+    <audio id="shootSound" src="sound/shoot.mp3" preload="auto"></audio>
+    <audio id="destroySound" src="sound/destroy.mp3" preload="auto"></audio>
+    <audio id="gameOverSound" src="sound/gameover.mp3" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
