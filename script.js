@@ -232,15 +232,19 @@ class FallingItem {
 
     // Method to get the position of the *next* character to be typed
     getNextCharPosition() {
+        ctx.font = this.fontSize; // Ensure correct font for measurement
         const metrics = ctx.measureText(this.text); // Measure the whole word
         const totalWidth = metrics.width;
-        const approxCharWidth = totalWidth / this.text.length;
+        let approxCharWidth = totalWidth / this.text.length;
+        if (this.text.length === 0) approxCharWidth = 0; // Avoid division by zero
+
+        // Calculate width of the part already typed
         const typedPart = this.text.substring(0, this.currentTypedIndex);
         const typedWidth = ctx.measureText(typedPart).width;
 
-        // Calculate the X position relative to the center of the word/fruit text
+        // Estimate the center X of the next character
         const startX = this.x - totalWidth / 2;
-        const nextCharCenterX = startX + typedWidth + approxCharWidth / 2;
+        const nextCharCenterX = startX + typedWidth + (approxCharWidth / 2);
 
         return { x: nextCharCenterX, y: this.y };
     }
@@ -252,7 +256,7 @@ class Projectile {
         this.y = startY;
         const dx = targetX - startX;
         const dy = targetY - startY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const distance = Math.sqrt(dx * dx + dy * dy) || 1; // Avoid division by zero
         this.velocityX = (dx / distance) * speed;
         this.velocityY = (dy / distance) * speed;
         this.size = 4;
@@ -265,7 +269,7 @@ class Projectile {
         this.x += this.velocityX * deltaTime * 0.16; // Adjust multiplier for speed
         this.y += this.velocityY * deltaTime * 0.16;
         this.life--;
-        if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+        if (this.life <= 0 || this.x < -10 || this.x > canvas.width + 10 || this.y < -10 || this.y > canvas.height + 10) { // Allow going slightly offscreen
             this.markedForDeletion = true;
         }
     }
@@ -280,10 +284,8 @@ class Projectile {
         ctx.beginPath();
         ctx.arc(this.x - this.velocityX*0.5, this.y - this.velocityY*0.5, this.size * 0.7, 0, Math.PI * 2);
         ctx.fill();
-
     }
 }
-
 
 class DestructionEffect {
     constructor(x, y, count = 10, color = '#FF0000') {
@@ -335,6 +337,66 @@ class DestructionEffect {
     }
 }
 
+
+// --- Mobile Input Handling ---
+const keyboardContainer = document.getElementById('onscreen-keyboard');
+
+// Function to simulate a keydown event for the on-screen keyboard
+function simulateKeyPress(key) {
+    if (isGameOver) return; // Don't simulate if game is over
+    const upperKey = key.toUpperCase();
+    if (upperKey.length !== 1 || !/[A-Z]/.test(upperKey)) return;
+
+    // Create and dispatch event that handleInput can understand
+    const event = new KeyboardEvent('keydown', {
+        key: upperKey,
+        code: `Key${upperKey}`,
+        bubbles: true,
+        cancelable: true
+    });
+    document.dispatchEvent(event);
+}
+
+// Add listener for on-screen keyboard taps (using event delegation)
+if (keyboardContainer) {
+    keyboardContainer.addEventListener('click', function(e) {
+        if (e.target.tagName === 'BUTTON' && e.target.dataset.key) {
+             e.preventDefault(); // Prevent default button behavior
+            const key = e.target.dataset.key;
+            simulateKeyPress(key);
+            // Optional visual feedback
+            e.target.classList.add('tapped');
+            setTimeout(() => e.target.classList.remove('tapped'), 150);
+        }
+    });
+    // Prevent accidental page zoom on double-tap within the keyboard area
+    keyboardContainer.addEventListener('touchstart', function(e) {
+        if (e.target.tagName === 'BUTTON') {
+            e.preventDefault();
+        }
+    }, { passive: false });
+}
+
+// Function to unlock audio context on mobile after user interaction
+function initAudio() {
+  const sounds = [shootSound, destroySound, gameOverSound];
+  let unlocked = false;
+  const unlock = () => {
+    if (unlocked) return;
+    sounds.forEach(sound => {
+      // Try playing and pausing silently to unlock
+      sound.play().then(() => sound.pause()).catch(() => {});
+    });
+    unlocked = true;
+    document.removeEventListener('touchstart', unlock);
+    document.removeEventListener('click', unlock);
+    console.log("Audio Context Unlocked (attempted)");
+  };
+  document.addEventListener('touchstart', unlock, { once: true });
+  document.addEventListener('click', unlock, { once: true });
+}
+
+
 // --- Game Logic Functions ---
 
 function spawnItem() {
@@ -366,6 +428,7 @@ function spawnItem() {
     spawnInterval = Math.max(500, spawnInterval * 0.995);
 }
 
+// Main input handler for both physical and simulated key presses
 function handleInput(event) {
     if (isGameOver) return;
 
@@ -378,8 +441,7 @@ function handleInput(event) {
     // Prioritize targeting items already being typed
     let potentialTargets = fallingItems.filter(item => item.currentTypedIndex > 0 && !item.markedForDeletion);
     if (potentialTargets.length > 0) {
-         // Find the one closest to the bottom (most urgent)
-        potentialTargets.sort((a, b) => b.y - a.y);
+        potentialTargets.sort((a, b) => b.y - a.y); // Target lowest one
         targetItem = potentialTargets[0];
         if (targetItem.text[targetItem.currentTypedIndex] === key) {
              hit = true;
@@ -388,9 +450,9 @@ function handleInput(event) {
 
     // If no active target or wrong key for active target, check others
     if (!hit) {
-        // Find the lowest item starting with the pressed key
         potentialTargets = fallingItems.filter(item =>
             !item.markedForDeletion &&
+            item.text.length > 0 && // Ensure item has text
             item.text[0] === key &&
             item.currentTypedIndex === 0 // Only target if not already started
         );
@@ -419,7 +481,8 @@ function handleInput(event) {
         if (targetItem.currentTypedIndex >= targetItem.text.length) {
             score += targetItem.text.length * 10; // Score based on length
             targetItem.markedForDeletion = true;
-            effects.push(new DestructionEffect(targetPos.x, targetPos.y)); // Explosion at last char pos
+            // Use the calculated targetPos for the effect, as it's the last known character position
+            effects.push(new DestructionEffect(targetPos.x, targetPos.y));
             playSound(destroySound);
             triggerScreenShake();
             updateScoreAndLevel();
@@ -439,10 +502,7 @@ function updateScoreAndLevel() {
     if (score >= WIN_SCORE && level === 1) {
         level = 2;
         levelDisplay.textContent = `Level: ${level}`;
-        // Maybe add a level up visual/sound effect here
         console.log("LEVEL 2 REACHED! Fruit time!");
-        // Clear existing non-fruit items maybe? Or let them fall.
-        // fallingItems = fallingItems.filter(item => item.type === 'fruit'); // Optional: clear old items
         spawnInterval *= 0.8; // Spawn fruits a bit faster initially
     }
 }
@@ -455,8 +515,10 @@ function gameOver() {
     finalScoreDisplay.textContent = score;
     gameOverScreen.style.display = 'flex'; // Show the game over screen
     console.log("Game Over!");
-     // Stop animation loop potentially here if not handled by isGameOver flag in loop
-     // cancelAnimationFrame(animationFrameId); // Need to store the id from requestAnimationFrame
+    // Stop animation loop potentially here if not handled by isGameOver flag in loop
+     if (animationFrameId) {
+         cancelAnimationFrame(animationFrameId);
+     }
 }
 
 function restartGame() {
@@ -486,14 +548,15 @@ function resizeCanvas() {
 
 // --- Game Loop ---
 let lastTime = 0;
-let animationFrameId;
+let animationFrameId; // Store the request ID
 
 function gameLoop(timestamp) {
     if (isGameOver) {
-         // Maybe draw a faded background or static game over state?
+         // If game over, ensure loop doesn't continue unnecessarily
+         // Draw final faded state maybe?
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        return; // Stop the loop if game is over
+        return;
     }
 
      animationFrameId = requestAnimationFrame(gameLoop); // Request next frame
@@ -539,16 +602,15 @@ function gameLoop(timestamp) {
 
      // Draw effects
     effects.forEach(effect => effect.draw(ctx));
-
-
 }
 
 // --- Initialization ---
 window.addEventListener('resize', resizeCanvas);
-document.addEventListener('keydown', handleInput);
+document.addEventListener('keydown', handleInput); // Physical keyboard listener
 restartButton.addEventListener('click', restartGame);
 
 // Initial setup
+initAudio(); // Prepare audio context for mobile
 resizeCanvas(); // Set initial size and cannon position
 updateScoreAndLevel(); // Set initial UI
 lastSpawnTime = Date.now();
