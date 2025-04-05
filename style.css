@@ -1,129 +1,367 @@
-/* === (Keep existing reset and html, body styles) === */
+/* === Base Styles (Keep existing reset) === */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0a0a0a; color: #ffffff; font-family: 'Courier New', Courier, monospace; }
 
-/* === Styles for Mode Selection Screen === */
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Slightly darker, richer background */
+    background-color: #080808;
+    color: #e0e0e0; /* Slightly softer white */
+    font-family: 'Consolas', 'Monaco', 'Courier New', Courier, monospace; /* Prioritize cleaner monospace fonts */
+    /* Add a subtle global text glow */
+    text-shadow: 0 0 1px rgba(255, 100, 100, 0.3);
+}
+
+/* === Styles for Mode Selection Screen (Enhanced) === */
 #modeSelectionScreen {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(10, 10, 10, 0.9);
-    border: 2px solid #ff3333;
-    padding: 40px 50px;
+    /* Use a subtle radial gradient for depth */
+    background: radial-gradient(ellipse at center, rgba(30, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.9) 70%);
+    border: 2px solid #ff2222; /* Slightly brighter border */
+    padding: 45px 60px; /* Increase padding */
     text-align: center;
-    z-index: 100; /* Ensure it's on top */
-    box-shadow: 0 0 25px 8px rgba(255, 0, 0, 0.6);
-    border-radius: 10px;
-    display: flex; /* Use flex for centering */
+    z-index: 100;
+    /* More pronounced outer glow and subtle inner glow */
+    box-shadow:
+        0 0 20px 7px rgba(255, 0, 0, 0.6), /* Outer glow */
+        0 0 45px 15px rgba(255, 0, 0, 0.3), /* Wider outer glow */
+        inset 0 0 15px 5px rgba(255, 0, 0, 0.2); /* Inner glow */
+    border-radius: 12px; /* Slightly more rounded */
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 25px; /* Space between elements */
+    gap: 30px; /* More space between elements */
+    /* Add a subtle entrance animation */
+    opacity: 0;
+    animation: fadeInGlow 0.8s ease-out forwards;
+}
+
+@keyframes fadeInGlow {
+    from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); box-shadow: 0 0 5px 2px rgba(255,0,0,0.3); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 20px 7px rgba(255, 0, 0, 0.6), 0 0 45px 15px rgba(255, 0, 0, 0.3), inset 0 0 15px 5px rgba(255, 0, 0, 0.2); }
 }
 
 #modeSelectionScreen h1 {
-    color: #ff4444;
-    margin-bottom: 10px;
-    font-size: 2em;
-    text-shadow: 0 0 8px #ff0000;
+    color: #ff5555; /* Brighter red */
+    margin-bottom: 15px; /* Adjusted spacing */
+    font-size: 2.4em;
+    font-weight: bold;
+    letter-spacing: 1px;
+    /* Enhanced text glow */
+    text-shadow:
+        0 0 5px #ff0000,
+        0 0 15px #ff3333,
+        0 0 25px #ff5555;
+    /* Subtle text pulse */
+    animation: pulseText 3s infinite ease-in-out;
 }
+
+@keyframes pulseText {
+    0%, 100% { text-shadow: 0 0 5px #ff0000, 0 0 15px #ff3333, 0 0 25px #ff5555; }
+    50% { text-shadow: 0 0 8px #ff2222, 0 0 20px #ff5555, 0 0 35px #ff7777; }
+}
+
 
 #modeSelectionScreen button {
-    padding: 15px 30px;
-    font-size: 1.2em;
-    background-color: #ffffff;
-    color: #000000;
-    border: 2px solid #ff0000;
+    padding: 18px 35px; /* Larger buttons */
+    font-size: 1.3em;
+    font-weight: bold;
+    /* Darker button base */
+    background-color: #1a1a1a;
+    color: #ff6666; /* Red text */
+    border: 1px solid #ff4444;
     cursor: pointer;
     font-family: inherit;
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.1s;
-    border-radius: 5px;
-    min-width: 200px; /* Ensure buttons have good width */
+    transition: all 0.2s ease-out; /* Smooth transition for all properties */
+    border-radius: 8px;
+    min-width: 220px;
+    letter-spacing: 0.5px;
+    position: relative; /* Needed for pseudo-elements */
+    overflow: hidden; /* Hide overflowing pseudo-elements */
+    box-shadow: inset 0 0 8px rgba(255, 50, 50, 0.3); /* Subtle inner glow */
 }
 
-#modeSelectionScreen button:hover,
+/* Add a scanline effect on hover */
+#modeSelectionScreen button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 100, 100, 0.3), transparent);
+    transition: left 0.4s ease-out;
+}
+
+#modeSelectionScreen button:hover::before {
+    left: 100%;
+}
+
+#modeSelectionScreen button:hover {
+    background-color: #ff3333; /* Bright red background on hover */
+    color: #ffffff; /* White text on hover */
+    border-color: #ff7777;
+    box-shadow: 0 0 15px #ff1111, 0 0 25px #ff3333; /* Stronger outer glow */
+    transform: translateY(-2px); /* Slight lift */
+}
+
 #modeSelectionScreen button:active {
-    background-color: #ff0000;
-    color: #ffffff;
-    box-shadow: 0 0 15px #ff0000;
-}
-#modeSelectionScreen button:active {
-    transform: scale(0.97); /* Press effect */
+    background-color: #ff0000; /* Even brighter red */
+    color: #fff;
+    box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, inset 0 0 10px rgba(0,0,0,0.5); /* Press effect shadow */
+    transform: scale(0.96) translateY(1px); /* Press down effect */
+    transition-duration: 0.05s; /* Faster transition on active */
 }
 
-
-/* === Game Container initially hidden === */
+/* === Game Container (Enhanced) === */
 #gameContainer {
-    /* Keep existing styles (position, width, height, background, etc.) */
     position: relative;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
-    animation: backgroundPulse 5s infinite linear;
-    /* display: none; Now controlled by JS */
+    /* More vibrant grid lines */
+    background-image:
+        linear-gradient(rgba(255, 50, 50, 0.15) 1.5px, transparent 1.5px), /* Red lines */
+        linear-gradient(90deg, rgba(50, 200, 200, 0.15) 1.5px, transparent 1.5px); /* Cyan lines */
+    background-size: 25px 25px; /* Slightly larger grid */
+    animation: backgroundPulse 6s infinite linear, backgroundScroll 20s linear infinite; /* Add subtle scroll */
+    background-color: #080808; /* Match body background */
+    /* Add a vignette effect to focus the center */
+    box-shadow: inset 0 0 150px 50px rgba(0, 0, 0, 0.7);
+    /* display: none; Controlled by JS */
+}
+
+@keyframes backgroundScroll {
+  from { background-position: 0 0; }
+  to { background-position: 50px 50px; } /* Scrolls one grid square */
+}
+
+@keyframes backgroundPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
 }
 
 /* === Canvas Styles (Keep as is) === */
 #gameCanvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-/* === UI Styles (Keep as is) === */
-#ui { position: absolute; top: 10px; left: 10px; z-index: 5; font-size: 1.2em; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000; }
-#ui div { margin-bottom: 5px; }
+/* === UI Styles (Enhanced) === */
+#ui {
+    position: absolute;
+    top: 0; /* Align to top */
+    left: 0; /* Align to left */
+    z-index: 5;
+    font-size: 1.4em; /* Slightly larger */
+    /* Give it a background and border */
+    background-color: rgba(10, 10, 10, 0.7);
+    padding: 12px 18px;
+    border-bottom: 2px solid #ff4444;
+    border-right: 2px solid #ff4444;
+    border-bottom-right-radius: 10px;
+    /* Enhanced glow */
+    text-shadow: 0 0 4px #ff3333, 0 0 8px #ff3333;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+}
+#ui div { margin-bottom: 8px; } /* More spacing */
+#ui div:last-child { margin-bottom: 0; }
 
-/* === WordSource Styles (Keep as is) === */
-#wordSource { position: absolute; top: -10px; left: 0; width: 100%; height: 20px; background: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), transparent); z-index: 2; box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7); }
+/* === WordSource Styles (Enhanced) === */
+#wordSource {
+    position: absolute;
+    top: -5px; /* Slightly overlap top edge */
+    left: 0;
+    width: 100%;
+    height: 15px; /* Thinner line */
+    /* Sharper, more intense gradient */
+    background: linear-gradient(to bottom, rgba(255, 0, 0, 0.85), rgba(255, 0, 0, 0.2), transparent);
+    z-index: 2;
+    /* More intense, pulsing shadow */
+    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7);
+    filter: blur(1px); /* Add a slight blur for softness */
+    animation: pulseGlow 2.5s infinite ease-in-out;
+}
 
-/* === GameOverScreen Styles (Keep as is) === */
-#gameOverScreen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.85); border: 2px solid #ff0000; padding: 30px 40px; text-align: center; z-index: 10; box-shadow: 0 0 20px 5px #ff0000; display: none; width: 90%; max-width: 500px; border-radius: 8px; }
-#gameOverScreen h1 { color: #ff0000; margin-bottom: 15px; font-size: 2.5em; text-shadow: 0 0 10px #ff0000; }
-#gameOverScreen p { font-size: 1.3em; margin-bottom: 25px; }
-#restartButton { padding: 12px 25px; font-size: 1.1em; background-color: #ffffff; color: #000000; border: 2px solid #ff0000; cursor: pointer; font-family: inherit; transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; border-radius: 5px; }
-#restartButton:hover, #restartButton:active { background-color: #ff0000; color: #ffffff; box-shadow: 0 0 15px #ff0000; }
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7); opacity: 0.8; }
+    50% { box-shadow: 0 0 25px 10px rgba(255, 50, 50, 0.9); opacity: 1; }
+}
 
-/* === On-Screen Keyboard Styles === */
+/* === GameOverScreen Styles (Enhanced) === */
+#gameOverScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Match mode selection style */
+    background: radial-gradient(ellipse at center, rgba(30, 0, 0, 0.98) 0%, rgba(10, 10, 10, 0.95) 70%);
+    border: 2px solid #ff2222;
+    padding: 40px 50px;
+    text-align: center;
+    z-index: 10;
+    box-shadow:
+        0 0 20px 7px rgba(255, 0, 0, 0.6),
+        0 0 45px 15px rgba(255, 0, 0, 0.3),
+        inset 0 0 15px 5px rgba(255, 0, 0, 0.2);
+    display: none; /* Keep hidden initially */
+    width: 90%;
+    max-width: 550px; /* Slightly wider */
+    border-radius: 12px;
+    animation: fadeInGlow 0.5s ease-out forwards; /* Re-use animation */
+}
+
+#gameOverScreen h1 {
+    color: #ff3333; /* Consistent red */
+    margin-bottom: 20px;
+    font-size: 3em; /* Larger title */
+    text-shadow: 0 0 7px #ff0000, 0 0 20px #ff3333;
+    animation: pulseText 3s infinite ease-in-out; /* Re-use animation */
+}
+
+#gameOverScreen p {
+    font-size: 1.4em;
+    margin-bottom: 30px;
+    color: #ccc; /* Slightly dimmed text */
+}
+
+/* Apply enhanced button styles to Restart button */
+#restartButton {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    font-weight: bold;
+    background-color: #1a1a1a;
+    color: #ff6666;
+    border: 1px solid #ff4444;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease-out;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 8px rgba(255, 50, 50, 0.3);
+}
+#restartButton::before { /* Hover effect */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 100, 100, 0.3), transparent);
+    transition: left 0.4s ease-out;
+}
+#restartButton:hover::before { left: 100%; }
+#restartButton:hover {
+    background-color: #ff3333;
+    color: #ffffff;
+    border-color: #ff7777;
+    box-shadow: 0 0 15px #ff1111, 0 0 25px #ff3333;
+    transform: translateY(-2px);
+}
+#restartButton:active {
+    background-color: #ff0000;
+    color: #fff;
+    box-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, inset 0 0 10px rgba(0,0,0,0.5);
+    transform: scale(0.96) translateY(1px);
+    transition-duration: 0.05s;
+}
+
+
+/* === On-Screen Keyboard Styles (Enhanced) === */
 #onscreen-keyboard {
-    /* Keep existing position, width, max-width, padding, background, border-top, z-index, flex layout, gap, touch-action */
     position: absolute;
     bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 700px;
-    padding: 5px;
-    background-color: rgba(15, 15, 15, 0.88);
-    border-top: 1px solid #ff0000;
+    padding: 8px 5px; /* More padding */
+    background-color: rgba(15, 15, 15, 0.92); /* Slightly more opaque */
+    /* Add subtle top glow */
+    border-top: 2px solid #ff3333;
+    box-shadow: 0 -5px 20px -5px rgba(255, 0, 0, 0.4);
     z-index: 20;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px; /* Slightly more gap */
     touch-action: manipulation;
-    /* **** Set default display to none **** */
-    display: none;
+    display: none; /* Keep hidden by default */
+    border-radius: 8px 8px 0 0; /* Rounded top corners */
 }
 
-/* **** Rule to SHOW keyboard ONLY when mobile mode is active **** */
 .mobile-mode-active #onscreen-keyboard {
-    display: flex; /* Or block, depending on your layout needs */
+    display: flex;
 }
 
-/* Keep .kb-row and button styles as they were */
-.kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; padding: 0 2px; }
-#onscreen-keyboard button { font-family: 'Arial', sans-serif; font-size: clamp(12px, 3.5vw, 18px); font-weight: bold; padding: clamp(8px, 2vh, 15px) 2px; flex-grow: 1; flex-basis: 0; text-align: center; background-color: #444; color: #eee; border: 1px solid #666; border-radius: 5px; cursor: pointer; min-width: 28px; height: clamp(35px, 6vh, 50px); line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: background-color 0.1s ease; touch-action: manipulation; }
-#onscreen-keyboard button:active, #onscreen-keyboard button.tapped { background-color: #ff1a1a; color: #fff; transform: scale(0.96); border-color: #ff4d4d; }
+.kb-row { display: flex; justify-content: center; gap: 5px; width: 100%; padding: 0 3px; }
 
-/* === Animations (Keep as is) === */
-@keyframes shake { /* ... */ }
-.shake { /* ... */ }
-@keyframes backgroundPulse { /* ... */ }
+#onscreen-keyboard button {
+    font-family: 'Consolas', 'Monaco', monospace; /* Consistent font */
+    font-size: clamp(13px, 3.6vw, 19px); /* Slightly larger */
+    font-weight: bold;
+    padding: clamp(8px, 2vh, 15px) 2px;
+    flex-grow: 1;
+    flex-basis: 0;
+    text-align: center;
+    background-color: #333; /* Slightly lighter base */
+    color: #ddd;
+    border: 1px solid #555;
+    border-bottom: 2px solid #222; /* Add depth */
+    border-radius: 6px; /* More rounded */
+    cursor: pointer;
+    min-width: 30px; /* Min width */
+    height: clamp(40px, 6.5vh, 55px); /* Slightly taller */
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s ease;
+    touch-action: manipulation;
+    text-shadow: 0 0 2px rgba(255, 100, 100, 0.2); /* Subtle glow */
+}
 
-/* === Media Queries (Remove the one showing keyboard) === */
-/* Optional: Keep media queries for adjusting UI/font sizes on small screens, but NOT for showing the keyboard */
+#onscreen-keyboard button:hover {
+    background-color: #484848;
+    border-color: #777;
+    color: #fff;
+}
+
+#onscreen-keyboard button:active,
+#onscreen-keyboard button.tapped {
+    background-color: #ff2a2a; /* Brighter active state */
+    color: #fff;
+    transform: translateY(1px) scale(0.97); /* Press effect */
+    border-color: #ff4d4d;
+    border-bottom-width: 1px; /* Reduce bottom border on press */
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* === Existing Animations (Keep as is) === */
+/* @keyframes shake { ... } */
+/* .shake { ... } */
+
+/* === Media Queries (Keep adjustments, ensure keyboard logic is handled by JS class toggle) === */
 @media (max-width: 768px) {
-    #ui { font-size: 1em; }
-    /* Other adjustments if needed */
+    #ui { font-size: 1.1em; padding: 10px 15px; }
+    #modeSelectionScreen h1 { font-size: 2em; }
+    #modeSelectionScreen button { font-size: 1.1em; padding: 15px 30px; min-width: 180px; }
+    #gameOverScreen h1 { font-size: 2.5em; }
+    #gameOverScreen p { font-size: 1.2em; }
+}
+@media (max-width: 480px) {
+    #ui { font-size: 1em; padding: 8px 12px; }
+    #modeSelectionScreen { padding: 30px 40px; gap: 20px; }
+    #modeSelectionScreen h1 { font-size: 1.8em; }
+    #modeSelectionScreen button { font-size: 1em; padding: 12px 25px; min-width: 160px; }
+    #gameOverScreen { padding: 25px 30px; }
+    #gameOverScreen h1 { font-size: 2.2em; }
+    #gameOverScreen p { font-size: 1.1em; }
+    #restartButton { font-size: 1em; padding: 12px 25px; }
 }
 @media (max-width: 360px) {
-     #ui { font-size: 0.9em; }
-     /* Further adjustments if needed */
+     #ui { font-size: 0.9em; padding: 6px 10px; }
+     #modeSelectionScreen { padding: 25px 30px; }
+     #gameOverScreen { padding: 20px 25px; }
 }
