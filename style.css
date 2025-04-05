@@ -130,3 +130,113 @@ html, body {
     50% { background-color: #1a0505; } /* Subtle red pulse */
     100% { background-color: #0a0a0a; }
 }
+
+
+/* === Styles Added for Mobile/On-Screen Keyboard === */
+
+/* --- On-Screen Keyboard Styles --- */
+#onscreen-keyboard {
+    position: absolute;
+    bottom: 10px; /* Position near the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%; /* Take up most of the width */
+    max-width: 600px; /* Limit max width on larger screens if needed */
+    padding: 5px;
+    background-color: rgba(20, 20, 20, 0.85); /* Dark semi-transparent */
+    border: 1px solid #ff0000;
+    border-radius: 8px;
+    z-index: 20; /* Ensure it's above the canvas */
+    display: flex;
+    flex-direction: column; /* Stack rows vertically */
+    align-items: center;
+    gap: 5px; /* Space between rows */
+    touch-action: manipulation; /* Prevent double-tap zoom on keyboard */
+    -webkit-user-select: none; /* Disable text selection */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.kb-row {
+    display: flex; /* Arrange buttons horizontally */
+    justify-content: center;
+    gap: 4px; /* Space between buttons */
+    width: 100%;
+}
+
+#onscreen-keyboard button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em; /* Adjust as needed */
+    font-weight: bold;
+    padding: 10px 5px; /* Vertical padding more important */
+    flex-grow: 1; /* Allow buttons to grow */
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 30px; /* Minimum width */
+    transition: background-color 0.1s ease;
+    touch-action: manipulation; /* Prevent zoom on button too */
+}
+
+#onscreen-keyboard button:active,
+#onscreen-keyboard button.tapped { /* Style for tap feedback */
+    background-color: #ff0000;
+    color: #fff;
+    transform: scale(0.95); /* Slight shrink effect */
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+/* Hide keyboard by default (for desktop) */
+.mobile-only {
+    display: none;
+}
+
+/* Show keyboard and adjust layout for smaller/touch devices */
+/* Using max-width and pointer:coarse for better touch detection */
+@media (hover: none) and (pointer: coarse), (max-width: 768px) {
+
+    .mobile-only {
+        display: flex; /* Show the keyboard */
+    }
+
+    #ui {
+        font-size: 1.1em; /* Slightly smaller UI text */
+        top: 10px;
+        left: 10px;
+    }
+
+    #gameOverScreen {
+        padding: 20px 30px; /* Smaller padding */
+        width: 90%;
+    }
+    #gameOverScreen h1{
+        font-size: 2em;
+    }
+     #gameOverScreen p{
+        font-size: 1.2em;
+    }
+     #restartButton {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+}
+
+/* Specific adjustments for very narrow screens (portrait phones) */
+@media (max-width: 400px) {
+     #ui {
+        font-size: 1em;
+     }
+     #onscreen-keyboard button {
+         font-size: 1em;
+         padding: 8px 4px;
+         min-width: 25px;
+     }
+      .kb-row {
+          gap: 3px;
+      }
+}
