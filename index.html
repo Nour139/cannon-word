@@ -2,22 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- **** CRITICAL: Ensure this viewport tag is exactly like this **** -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Word Canon</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Add basic mobile touch handling improvements -->
     <style>
-      body { -webkit-tap-highlight-color: transparent; } /* Remove tap highlight */
+      body { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
 <body>
-    <!-- gameContainer should fill the body -->
-    <div id="gameContainer">
-        <!-- Canvas where the game is drawn -->
+
+    <!-- **** ADD Mode Selection Screen **** -->
+    <div id="modeSelectionScreen">
+        <h1>Choose Your Mode</h1>
+        <button id="desktopModeButton">Desktop Mode</button>
+        <button id="mobileModeButton">Mobile Mode</button>
+    </div>
+    <!-- ******************************** -->
+
+
+    <!-- gameContainer will be hidden initially by CSS -->
+    <div id="gameContainer" style="display: none;">
         <canvas id="gameCanvas"></canvas>
 
-        <!-- UI Elements -->
         <div id="ui">
             <div id="score">Score: 0</div>
             <div id="level">Level: 1</div>
@@ -29,9 +35,9 @@
             <button id="restartButton">RESTART</button>
         </div>
 
-        <!-- On-Screen Keyboard Structure for Mobile -->
-        <div id="onscreen-keyboard" class="mobile-only">
-            <!-- Keyboard Rows (QWERTY layout) -->
+        <!-- On-Screen Keyboard Structure (will be shown only in mobile mode via JS/CSS) -->
+        <div id="onscreen-keyboard">
+             <!-- Keyboard Rows... -->
             <div class="kb-row">
                 <button data-key="Q">Q</button><button data-key="W">W</button><button data-key="E">E</button><button data-key="R">R</button><button data-key="T">T</button><button data-key="Y">Y</button><button data-key="U">U</button><button data-key="I">I</button><button data-key="O">O</button><button data-key="P">P</button>
             </div>
@@ -42,14 +48,13 @@
                 <button data-key="Z">Z</button><button data-key="X">X</button><button data-key="C">C</button><button data-key="V">V</button><button data-key="B">B</button><button data-key="N">N</button><button data-key="M">M</button>
             </div>
         </div>
-        <!-- End On-Screen Keyboard -->
 
     </div> <!-- End of gameContainer -->
 
     <!-- Sound Files -->
-    <audio id="shootSound" src="sound/shoot.mp3" preload="auto"></audio>
-    <audio id="destroySound" src="sound/destroy.mp3" preload="auto"></audio>
-    <audio id="gameOverSound" src="sound/gameOver.mp3" preload="auto"></audio>
+    <audio id="shootSound" src="assets/shoot.wav" preload="auto"></audio>
+    <audio id="destroySound" src="assets/destroy.wav" preload="auto"></audio>
+    <audio id="gameOverSound" src="assets/gameOver.wav" preload="auto"></audio>
 
     <script src="script.js"></script>
 </body>
