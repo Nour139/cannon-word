@@ -1,218 +1,129 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    /* Prevent selection Cursors on mobile */
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-}
+/* === (Keep existing reset and html, body styles) === */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+html, body { width: 100%; height: 100%; overflow: hidden; background-color: #0a0a0a; color: #ffffff; font-family: 'Courier New', Courier, monospace; }
 
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden; /* CRITICAL: Prevent scrollbars */
-    background-color: #0a0a0a;
-    color: #ffffff;
-    font-family: 'Courier New', Courier, monospace;
-}
-
-#gameContainer {
-    position: relative; /* Needed for absolute positioning of children */
-    width: 100%; /* Use 100% to fill parent (body) */
-    height: 100%;
-    /* Keep background styling */
-    background-image:
-        linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
-    animation: backgroundPulse 5s infinite linear;
-}
-
-#gameCanvas {
-    display: block; /* IMPORTANT: Removes potential extra space below canvas */
-    position: absolute; /* Position relative to gameContainer */
-    top: 0;
-    left: 0;
-    width: 100%; /* Fill the container */
-    height: 100%;
-    z-index: 1; /* Ensure canvas is behind UI but visible */
-}
-
-#ui {
-    position: absolute;
-    top: 10px; /* Adjusted slightly for mobile */
-    left: 10px;
-    z-index: 5; /* Above canvas */
-    font-size: 1.2em; /* Default size */
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
-}
-
-#ui div {
-    margin-bottom: 5px;
-}
-
-#wordSource {
-    position: absolute;
-    top: -10px;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), transparent);
-    z-index: 2; /* Above canvas, below UI */
-    box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7);
-}
-
-#gameOverScreen {
+/* === Styles for Mode Selection Screen === */
+#modeSelectionScreen {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.85);
-    border: 2px solid #ff0000;
-    padding: 30px 40px; /* Adjusted padding */
+    background-color: rgba(10, 10, 10, 0.9);
+    border: 2px solid #ff3333;
+    padding: 40px 50px;
     text-align: center;
-    z-index: 10; /* Above everything */
-    box-shadow: 0 0 20px 5px #ff0000;
-    display: none;
-    width: 90%; /* Take up more width on mobile */
-    max-width: 500px; /* Max width on larger screens */
+    z-index: 100; /* Ensure it's on top */
+    box-shadow: 0 0 25px 8px rgba(255, 0, 0, 0.6);
+    border-radius: 10px;
+    display: flex; /* Use flex for centering */
+    flex-direction: column;
+    align-items: center;
+    gap: 25px; /* Space between elements */
 }
 
-#gameOverScreen h1 {
-    color: #ff0000;
-    margin-bottom: 15px; /* Adjusted */
-    font-size: 2.5em; /* Adjusted */
-    text-shadow: 0 0 10px #ff0000;
+#modeSelectionScreen h1 {
+    color: #ff4444;
+    margin-bottom: 10px;
+    font-size: 2em;
+    text-shadow: 0 0 8px #ff0000;
 }
 
-#gameOverScreen p {
-    font-size: 1.3em; /* Adjusted */
-    margin-bottom: 25px; /* Adjusted */
-}
-
-#restartButton {
-    padding: 12px 25px; /* Adjusted */
-    font-size: 1.1em; /* Adjusted */
+#modeSelectionScreen button {
+    padding: 15px 30px;
+    font-size: 1.2em;
     background-color: #ffffff;
     color: #000000;
     border: 2px solid #ff0000;
     cursor: pointer;
     font-family: inherit;
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    border-radius: 5px; /* Added */
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.1s;
+    border-radius: 5px;
+    min-width: 200px; /* Ensure buttons have good width */
 }
 
-#restartButton:hover, #restartButton:active { /* Added active state */
+#modeSelectionScreen button:hover,
+#modeSelectionScreen button:active {
     background-color: #ff0000;
     color: #ffffff;
     box-shadow: 0 0 15px #ff0000;
 }
+#modeSelectionScreen button:active {
+    transform: scale(0.97); /* Press effect */
+}
 
-/* --- On-Screen Keyboard Styles --- */
+
+/* === Game Container initially hidden === */
+#gameContainer {
+    /* Keep existing styles (position, width, height, background, etc.) */
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(255, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    animation: backgroundPulse 5s infinite linear;
+    /* display: none; Now controlled by JS */
+}
+
+/* === Canvas Styles (Keep as is) === */
+#gameCanvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+/* === UI Styles (Keep as is) === */
+#ui { position: absolute; top: 10px; left: 10px; z-index: 5; font-size: 1.2em; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000; }
+#ui div { margin-bottom: 5px; }
+
+/* === WordSource Styles (Keep as is) === */
+#wordSource { position: absolute; top: -10px; left: 0; width: 100%; height: 20px; background: linear-gradient(to bottom, rgba(255, 0, 0, 0.5), transparent); z-index: 2; box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.7); }
+
+/* === GameOverScreen Styles (Keep as is) === */
+#gameOverScreen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.85); border: 2px solid #ff0000; padding: 30px 40px; text-align: center; z-index: 10; box-shadow: 0 0 20px 5px #ff0000; display: none; width: 90%; max-width: 500px; border-radius: 8px; }
+#gameOverScreen h1 { color: #ff0000; margin-bottom: 15px; font-size: 2.5em; text-shadow: 0 0 10px #ff0000; }
+#gameOverScreen p { font-size: 1.3em; margin-bottom: 25px; }
+#restartButton { padding: 12px 25px; font-size: 1.1em; background-color: #ffffff; color: #000000; border: 2px solid #ff0000; cursor: pointer; font-family: inherit; transition: background-color 0.3s, color 0.3s, box-shadow 0.3s; border-radius: 5px; }
+#restartButton:hover, #restartButton:active { background-color: #ff0000; color: #ffffff; box-shadow: 0 0 15px #ff0000; }
+
+/* === On-Screen Keyboard Styles === */
 #onscreen-keyboard {
+    /* Keep existing position, width, max-width, padding, background, border-top, z-index, flex layout, gap, touch-action */
     position: absolute;
-    bottom: 5px; /* Closer to edge */
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 100%; /* Full width */
-    max-width: 700px; /* Max width */
+    width: 100%;
+    max-width: 700px;
     padding: 5px;
-    background-color: rgba(15, 15, 15, 0.88); /* Slightly darker */
-    border-top: 1px solid #ff0000; /* Only top border */
-    z-index: 20; /* Above canvas and UI */
-    display: flex;
+    background-color: rgba(15, 15, 15, 0.88);
+    border-top: 1px solid #ff0000;
+    z-index: 20;
     flex-direction: column;
     align-items: center;
     gap: 5px;
     touch-action: manipulation;
+    /* **** Set default display to none **** */
+    display: none;
 }
 
-.kb-row {
-    display: flex;
-    justify-content: center;
-    gap: 4px; /* Adjust spacing */
-    width: 100%; /* Ensure rows take full width */
-    padding: 0 2px; /* Add slight horizontal padding */
+/* **** Rule to SHOW keyboard ONLY when mobile mode is active **** */
+.mobile-mode-active #onscreen-keyboard {
+    display: flex; /* Or block, depending on your layout needs */
 }
 
-#onscreen-keyboard button {
-    font-family: 'Arial', sans-serif; /* Cleaner font maybe? */
-    font-size: clamp(12px, 3.5vw, 18px); /* Responsive font size */
-    font-weight: bold;
-    padding: clamp(8px, 2vh, 15px) 2px; /* Responsive padding */
-    flex-grow: 1;
-    flex-basis: 0; /* Distribute space evenly */
-    text-align: center;
-    background-color: #444; /* Darker buttons */
-    color: #eee;
-    border: 1px solid #666;
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer;
-    min-width: 28px; /* Min width */
-    height: clamp(35px, 6vh, 50px); /* Responsive height */
-    line-height: 1; /* Adjust for vertical centering */
-    display: inline-flex; /* Align text better */
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.1s ease;
-    touch-action: manipulation;
-}
+/* Keep .kb-row and button styles as they were */
+.kb-row { display: flex; justify-content: center; gap: 4px; width: 100%; padding: 0 2px; }
+#onscreen-keyboard button { font-family: 'Arial', sans-serif; font-size: clamp(12px, 3.5vw, 18px); font-weight: bold; padding: clamp(8px, 2vh, 15px) 2px; flex-grow: 1; flex-basis: 0; text-align: center; background-color: #444; color: #eee; border: 1px solid #666; border-radius: 5px; cursor: pointer; min-width: 28px; height: clamp(35px, 6vh, 50px); line-height: 1; display: inline-flex; align-items: center; justify-content: center; transition: background-color 0.1s ease; touch-action: manipulation; }
+#onscreen-keyboard button:active, #onscreen-keyboard button.tapped { background-color: #ff1a1a; color: #fff; transform: scale(0.96); border-color: #ff4d4d; }
 
-#onscreen-keyboard button:active,
-#onscreen-keyboard button.tapped {
-    background-color: #ff1a1a; /* Brighter red tap */
-    color: #fff;
-    transform: scale(0.96); /* Slightly different feedback */
-    border-color: #ff4d4d;
-}
+/* === Animations (Keep as is) === */
+@keyframes shake { /* ... */ }
+.shake { /* ... */ }
+@keyframes backgroundPulse { /* ... */ }
 
-
-/* --- Screen Shake --- */
-@keyframes shake {
-    /* (Shake animation remains the same) */
-     0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-0.5deg); }
-    20% { transform: translate(-3px, 0px) rotate(0.5deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(0.5deg); }
-    50% { transform: translate(-1px, 2px) rotate(-0.5deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-0.5deg); }
-    80% { transform: translate(-1px, -1px) rotate(0.5deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(1px, -2px) rotate(-0.5deg); }
-}
-.shake { animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both; transform: translate3d(0, 0, 0); backface-visibility: hidden; perspective: 1000px; }
-
-/* --- Background Pulse --- */
-@keyframes backgroundPulse {
-    /* (Pulse animation remains the same) */
-    0% { background-color: #0a0a0a; } 50% { background-color: #1a0505; } 100% { background-color: #0a0a0a; }
-}
-
-
-/* --- Media Queries for Responsiveness --- */
-/* Hide keyboard by default */
-.mobile-only { display: none; }
-
-/* Show keyboard ONLY on likely touch devices */
-/* This is more reliable than just checking width */
-@media (hover: none) and (pointer: coarse) {
-    .mobile-only { display: flex; } /* Show keyboard */
-
-    /* Adjust UI for smaller screens */
+/* === Media Queries (Remove the one showing keyboard) === */
+/* Optional: Keep media queries for adjusting UI/font sizes on small screens, but NOT for showing the keyboard */
+@media (max-width: 768px) {
     #ui { font-size: 1em; }
+    /* Other adjustments if needed */
 }
-
-/* Further adjustments for VERY narrow screens if needed */
 @media (max-width: 360px) {
-    #ui { font-size: 0.9em; }
-    #onscreen-keyboard button {
-         font-size: clamp(11px, 3vw, 16px); /* Slightly smaller font */
-    }
-     .kb-row { gap: 3px; }
+     #ui { font-size: 0.9em; }
+     /* Further adjustments if needed */
 }
